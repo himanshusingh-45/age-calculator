@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Date of Birth Age Calculator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400&family=Poppins:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(to right, #6a11cb, #2575fc);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            color: #333;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            width: 400px;
+        }
+
+        h1 {
+            font-family: 'Dancing Script', cursive;
+            font-size: 36px;
+            color: #2575fc;
+        }
+
+        label {
+            font-size: 18px;
+        }
+
+        input {
+            font-size: 16px;
+            padding: 10px;
+            margin-top: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: calc(100% - 22px);
+        }
+
+        button {
+            font-size: 18px;
+            padding: 10px 15px;
+            margin-top: 15px;
+            background-color: #2575fc;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background-color: #6a11cb;
+        }
+
+        .result, .units {
+            margin-top: 20px;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .error {
+            color: red;
+            margin-top: 20px;
+            font-weight: normal;
+        }
+
+        footer {
+            margin-top: 20px;
+            font-size: 16px;
+            color: #333;
+            font-weight: bold;
+        }
+
+        @media (max-width: 500px) {
+            .container {
+                width: 90%;
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 28px;
+            }
+        }
+
+        .dark-mode {
+            background: #333;
+            color: white;
+        }
+
+        .dark-mode .container {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .dark-mode button {
+            background-color: #444;
+        }
+
+        .dark-mode button:hover {
+            background-color: #6a11cb;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Age Calculator</h1>
+        <label for="dob">Enter your Date of Birth:</label>
+        <input type="date" id="dob">
+        <label for="tob">Enter your Time of Birth:</label>
+        <input type="time" id="tob">
+        <button onclick="calculateAge()">Calculate Age</button>
+        <button onclick="resetForm()" style="background-color: #ff4757;">Reset</button>
+        <div id="result" class="result"></div>
+        <div id="units" class="units"></div>
+        <div id="error" class="error"></div>
+        <button onclick="toggleDarkMode()">Toggle Dark Mode</button>
+        <footer>Made by Himanshu Singh </footer>
+    </div>
+
+    <script>
+        // Real-time update
+        document.getElementById('dob').addEventListener('change', calculateAge);
+
+        function calculateAge() {
+            const dobInput = document.getElementById('dob').value;
+            const dob = new Date(dobInput);
+            const today = new Date();
+            document.getElementById('error').innerText = ''; // Clear previous error message
+
+            if (!dobInput) {
+                document.getElementById('error').innerText = 'Please enter a valid date.';
+                document.getElementById('result').innerText = '';
+                return;
+            }
+            if (dob > today) {
+                document.getElementById('error').innerText = 'Date of birth cannot be in the future.';
+                document.getElementById('result').innerText = '';
+                return;
+            }
+
+            let years = today.getFullYear() - dob.getFullYear();
+            let months = today.getMonth() - dob.getMonth();
+            let days = today.getDate() - dob.getDate();
+            let hours = today.getHours() - dob.getHours();
+            let minutes = today.getMinutes() - dob.getMinutes();
+
+            // Adjust for negative days, months, etc.
+            if (days < 0) {
+                months--;
+                const lastDayOfPreviousMonth = new Date(today.getFullYear(), today.getMonth(), 0).getDate();
+                days += lastDayOfPreviousMonth;
+            }
+            if (months < 0) {
+                years--;
+                months += 12;
+            }
+            if (hours < 0) {
+                hours += 24;
+                days--;
+            }
+            if (minutes < 0) {
+                minutes += 60;
+                hours--;
+            }
+
+            document.getElementById('result').innerText = `Age: ${years} years, ${months} months, ${days} days, ${hours} hours, ${minutes} minutes`;
+
+            // Show additional units
+            const totalDays = Math.floor((today - dob) / (1000 * 60 * 60 * 24));
+            const totalHours = Math.floor((today - dob) / (1000 * 60 * 60));
+            const totalMinutes = Math.floor((today - dob) / (1000 * 60));
+            document.getElementById('units').innerText = `You are ${totalDays} days, ${totalHours} hours, or ${totalMinutes} minutes old.`;
+        }
+
+        function resetForm() {
+            document.getElementById('dob').value = '';
+            document.getElementById('tob').value = '';
+            document.getElementById('result').innerText = '';
+            document.getElementById('units').innerText = '';
+            document.getElementById('error').innerText = '';
+        }
+
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+        }
+    </script>
+</body>
+</html>
